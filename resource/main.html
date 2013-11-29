@@ -1,0 +1,123 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8" />
+<script type="text/javascript" src="./jquery-1.9.1.min.js"></script>
+<title>毕业证批量打印-测试版</title>
+<style>
+html, body, div, span, p, table, td {  
+    margin: 0; padding: 0; 
+    direction: ltr;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box; }
+    
+body {
+    background-color: #D4D0C8;
+    font-family:  sans-serif,宋体;
+    font-weight: normal;
+    font-style: normal;
+    line-height: 1;
+    overflow: hidden;
+    -webkit-font-smoothing: antialiased; }
+
+a:active,
+a:hover {
+    outline: 0; } 
+      
+table {
+    border-collapse: collapse;
+    border-spacing: 0; 
+}
+select { width: 150px;  text-align: right; margin-right: 20px; }    
+
+input[type="text"] { color: #999; margin-right: 20px; }
+label { display: inline-block; width: 300px; text-align: right;}
+
+#pager { zoom: 1;  font-size: 16px; padding: 5px 10px; }
+#header {  border-bottom: 1px #888 solid; margin: 0 0 10px;padding-bottom: 10px; }
+#user { height: 360px; line-height: 28px;  } 
+#action { border-top: 1px #888 solid; margin: 10px 0 0px; padding-top: 10px; }
+</style>
+</head>
+<body id="body">
+  <div class="pager" id="pager">
+    <div id="header">打印机：<select id="printer"><option value="">选择打印机</option></select> 数据来源：<input type="text" id="source" name="source" value="点击选择文件..." class="input_file" /><span id="message"></span></div>
+    <div id="main">
+      <div id="user"></div>
+      <div id="action">
+        <button id="do_prev">获取上一个数据</button>
+        <button id="do_next">获取下一个数据</button>
+        <button id="do_print">打印</button>
+      </div>
+    </div>
+  </div>
+    <script type="text/javascript">
+    <!--
+    var printerObj, printers, sourceFullPath, message, data_head, data_user, index;
+    printerObj.do_getPrinters('');
+    index = 1;
+   function display(header, info) {
+      header = eval("("+header+")");
+      info   = eval("("+info+")");
+      $('#user').empty();
+      $.each(header, function(i,item){
+        $('#user').append('<label>'+item+"：</label>"+info[i]+"<br />");
+      });
+      $('#message').html('<span style="color:red;">分析：' +index +'/' +message + '</span>');
+    }
+
+    $(function(){
+      $('button').attr('disabled', 'disabled');
+      printers = eval("("+printers+")");
+      $.each(printers, function(i,item){
+        $('#printer').append('<option value="'+item+'">'+item+'</option>');
+      });
+
+      $('#source').click(function(){
+        printerObj.do_setSourceFullPath('');
+
+        point = sourceFullPath.lastIndexOf(".");
+        sourceType = sourceFullPath.substr(point+1).toLowerCase();
+     
+        if (sourceType == 'xls' || sourceType == 'xlsx') {
+          $(this).val(sourceFullPath);
+          display(data_head, data_user);
+          $('button').removeAttr('disabled');
+        }
+        else {
+          $(this).val('文件类型错误！');
+        }
+      });
+      $('#do_next').click(function(){
+        printerObj.do_getNextData(1); 
+        display(data_head, data_user);
+        $('button#do_print').attr('data_click', '');
+      });
+      $('#do_prev').click(function(){
+        printerObj.do_getNextData(-1); 
+        display(data_head, data_user);
+        $('button#do_print').attr('data_click', '');
+      });
+      $('#do_print').click(function(){
+        p = $('#printer').val();
+        if (p == '') {
+          alert('请选择打印机名称');
+        }
+        else {
+          num = $('button#do_print').attr('data_click');
+  
+          if (num == '1' && !window.confirm('确认重新打印？') ) {
+            return False;
+          }
+          printerObj.do_print(p);
+          $('#message').html('<span style="color:red;">分析：' +index +'/' +message + '</span>');
+          $('button#do_print').attr('data_click', '1');
+        }
+      });
+    });
+  
+    //-->
+    </script>
+</body>
+</html>
